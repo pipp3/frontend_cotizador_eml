@@ -34,7 +34,7 @@ export default function Products() {
                 Nombre
               </th>
               <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-gray-300">
-                Precio Bruto
+                Precio Compra
               </th>
               <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-gray-300">
                 Precio Venta

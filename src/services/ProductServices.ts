@@ -32,12 +32,12 @@ export const createProduct = async (data: ProductData) => {
   try {
     const result = safeParse(DraftProductSchema, {
       nombre: data.nombre,
-      precio_bruto: +data.precio_bruto,
+      precio_compra: +data.precio_compra,
       precio_venta: +data.precio_venta,
       ultima_vez_ingresado: data.ultima_vez_ingresado,
     });
-    console.log(result.output);
-    console.log(result.success);
+    //console.log(result.output);
+    //console.log(result.success);
     if (result.success) {
       const url = `${import.meta.env.VITE_API_URL}/productos`;
       await axios.post(url, {
@@ -45,7 +45,7 @@ export const createProduct = async (data: ProductData) => {
           "Content-Type": "application/json",
         },
         nombre: result.output.nombre,
-        precio_bruto: result.output.precio_bruto,
+        precio_compra: result.output.precio_compra,
         precio_venta: result.output.precio_venta,
         ultima_vez_ingresado: result.output.ultima_vez_ingresado,
       });

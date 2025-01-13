@@ -3,7 +3,7 @@ import { object, string, number, boolean, array } from "valibot";
 export const DraftProductSchema = object({
   nombre: string(),
   precio_venta: number(),
-  precio_bruto: number(),
+  precio_compra: number(),
   ultima_vez_ingresado: string()
 });
 
@@ -11,7 +11,7 @@ export const ProductSchema = object({
   id: number(),
   nombre: string(),
   precio_venta: number(),
-  precio_bruto: number(),
+  precio_compra: number(),
   disponible: boolean(),
   ultima_vez_ingresado: string(),
   updated_at: string(),
@@ -24,7 +24,7 @@ export type Product = {
   id: number;
   nombre: string;
   precio_venta: number;
-  precio_bruto: number;
+  precio_compra: number;
   disponible: boolean;
   ultima_vez_ingresado: string;
   updated_at: string;

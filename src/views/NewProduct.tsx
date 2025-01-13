@@ -60,11 +60,11 @@ export default function NewProduct() {
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="precio_bruto" className="block font-medium">Precio Bruto</label>
+          <label htmlFor="precio_compra" className="block font-medium">Precio Compra</label>
           <input 
             type="number" 
-            id="precio_bruto" 
-            name="precio_bruto" 
+            id="precio_compra" 
+            name="precio_compra" 
             className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
