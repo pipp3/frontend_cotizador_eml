@@ -40,7 +40,7 @@ export default function NewProduct() {
         <h2 className="text-4xl font-bold text-sky-700">Nuevo Producto</h2>
         <Link 
           to="/" 
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors"
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors font-semibold"
         >
           Volver a Listado de Productos
         </Link>
@@ -101,7 +101,7 @@ export default function NewProduct() {
 
         <button 
           type="submit" 
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors mt-6"
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md font-semibold transition-colors mt-6"
         >
           Crear Producto
         </button>

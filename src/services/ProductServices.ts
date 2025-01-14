@@ -1,5 +1,10 @@
 import { safeParse } from "valibot";
-import { ProductsSchema, DraftProductSchema } from "../types";
+import {
+  ProductsSchema,
+  DraftProductSchema,
+  ProductSchema,
+  Product,
+} from "../types";
 import axios from "axios";
 
 type ProductData = {
@@ -52,6 +57,38 @@ export const createProduct = async (data: ProductData) => {
     } else {
       throw new Error("Error al validar los datos");
     }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getProductById = async (id: Product["id"]) => {
+  try {
+    const url = `${import.meta.env.VITE_API_URL}/productos/${id}`;
+    const { data } = await axios.get(url);
+    const product = data.data;
+    //console.log(product)
+    const result = safeParse(ProductSchema, product);
+    //console.log(result)
+    if (!result.success) {
+      throw new Error("Error al validar los datos");
+    }
+    return result.output;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateProduct = async (id: Product["id"], data: ProductData) => {
+  try {
+    const url = `${import.meta.env.VITE_API_URL}/productos/${id}`;
+    await axios.put(url, {
+      nombre: data.nombre,
+      precio_compra: +data.precio_compra,
+      precio_venta: +data.precio_venta,
+      ultima_vez_ingresado: data.ultima_vez_ingresado,
+      disponible: data.disponible,
+    });
   } catch (error) {
     console.log(error);
   }

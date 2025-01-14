@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@types/react-datepicker": "^7.0.0",
     "axios": "^1.7.9",
     "date-fns": "^4.1.0",

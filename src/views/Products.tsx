@@ -27,32 +27,35 @@ export default function Products() {
         <table className="w-full mt-4 border-collapse border border-gray-300 shadow-sm">
           <thead>
             <tr className="bg-gray-100">
-              <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-gray-300">
+              <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-b border-gray-300">
                 #
               </th>
-              <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-gray-300">
+              <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-b border-gray-300">
                 Nombre
               </th>
-              <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-gray-300">
+              <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-b border-gray-300">
                 Precio Compra
               </th>
-              <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-gray-300">
+              <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-b border-gray-300">
                 Precio Venta
               </th>
-              <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-gray-300">
+              <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-b border-gray-300">
                 Stock
               </th>
-              <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-gray-300">
+              <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-b border-gray-300">
                 Ultima Vez Ingresado
               </th>
-              <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-gray-300">
+              <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-b border-gray-300">
                 Ultima Vez Actualizado
+              </th>
+              <th className="p-2 text-left text-gray-500 font-bold text-sm border-r border-b border-gray-300">
+                Acciones
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {products.map((product) => (
-              <ProductDetails key={product.id} product={product} />
+            {products.map((product, index) => (
+              <ProductDetails key={product.id} product={product} index={index} />
             ))}
           </tbody>
         </table>

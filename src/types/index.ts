@@ -15,7 +15,7 @@ export const ProductSchema = object({
   disponible: boolean(),
   ultima_vez_ingresado: string(),
   updated_at: string(),
-  created_at: string(), // Agregamos el campo `created_at` que está en la respuesta de la API
+  created_at: string()  // Agregamos el campo `created_at` que está en la respuesta de la API
 });
 
 export const ProductsSchema = array(ProductSchema);
