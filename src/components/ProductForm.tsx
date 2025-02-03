@@ -1,8 +1,9 @@
 import { Product } from "../types";
 import DatePicker,{registerLocale} from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { es as esLocale } from 'date-fns/locale';
+import { parse } from "date-fns";
 
 registerLocale("es", esLocale);
 
@@ -10,10 +11,24 @@ type ProductFormProps = {
     product?:Product
 }
 export default function ProductForm({product}:ProductFormProps) {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    // Convertir la fecha inicial del producto (si existe) a un objeto Date
+  const initialDate = product?.ultima_vez_ingresado
+  ? parse(product.ultima_vez_ingresado, "dd/MM/yyyy", new Date())
+  : null;
+
+
+  const [selectedDate, setSelectedDate] = useState<Date | null>(initialDate);
   const handleDateChange = (date:Date | null) => {
     setSelectedDate(date);
   }
+  useEffect(() => {
+    // Actualizar la fecha seleccionada si cambia el producto
+    if (product?.ultima_vez_ingresado) {
+      setSelectedDate(
+        parse(product.ultima_vez_ingresado, "dd/MM/yyyy", new Date())
+      );
+    }
+  }, [product]);
   return (
     <div>
       <div className="mb-4">

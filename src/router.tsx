@@ -3,6 +3,7 @@ import Layout from "./layouts/Layout";
 import Products, {loader as productsLoader} from "./views/Products";
 import NewProduct, {action as newProductAction} from "./views/NewProduct";
 import EditProduct, {action as editProductAction,loader as editProductLoader} from "./views/EditProduct";
+import {action as deleteProduct} from "./components/ProductDetails";
 export const Router = createBrowserRouter([
   {
     path: "/",
@@ -25,6 +26,10 @@ export const Router = createBrowserRouter([
         action: editProductAction,
         loader: editProductLoader
       },
+      {
+        path:"/productos/:id/eliminar",
+        action: deleteProduct
+      }
     ],
   },
 ]);
