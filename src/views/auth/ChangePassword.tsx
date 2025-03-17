@@ -28,7 +28,7 @@ const ChangePassword = () => {
 
         {/* Mensaje de error */}
 
-        <form className="mt-8 space-y-6">
+        <Form className="mt-8 space-y-6">
           <div className="rounded-md shadow-sm -space-y-px">
             {/* Nueva contraseña */}
             <div className="relative mb-4">
@@ -156,7 +156,7 @@ const ChangePassword = () => {
               Actualizar contraseña
             </button>
           </div>
-        </form>
+        </Form>
 
         <div className="text-center mt-4">
           <Link
