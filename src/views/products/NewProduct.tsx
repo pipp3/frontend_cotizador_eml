@@ -1,10 +1,10 @@
 import { Link, Form, redirect, ActionFunctionArgs, useActionData } from "react-router-dom";
-import ErrorMessage from "../components/ErrorMessage";
+import ErrorMessage from "../../components/ErrorMessage";
 import DatePicker,{registerLocale} from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState } from "react";
 import { es as esLocale } from 'date-fns/locale';
-import { createProduct } from "../services/ProductServices";
+import { createProduct } from "../../services/ProductServices";
 
 registerLocale("es", esLocale);
 

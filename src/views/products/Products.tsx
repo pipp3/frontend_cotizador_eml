@@ -1,11 +1,18 @@
-import { Link, useLoaderData } from "react-router-dom";
-import { getProducts } from "../services/ProductServices";
-import { Product } from "../types";
-import ProductDetails from "../components/ProductDetails";
+import { Link, useLoaderData, redirect } from "react-router-dom";
+import { getProducts } from "../../services/ProductServices";
+import { Product } from "../../types";
+import ProductDetails from "../../components/ProductDetails";
+import { isAuthenticated } from "../../services/AuthServices";
 
 export async function loader() {
+  // Verificar autenticación antes de cargar los productos
+  const isAuth = await isAuthenticated();
+  if (!isAuth) {
+    return redirect('/');
+  }
+  
+  // Si está autenticado, cargar los productos
   const products = await getProducts();
-  //console.log(products)
   return products;
 }
 

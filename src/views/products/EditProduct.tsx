@@ -1,10 +1,10 @@
 import { redirect, useActionData, useLoaderData } from "react-router-dom";
-import ErrorMessage from "../components/ErrorMessage";
+import ErrorMessage from "../../components/ErrorMessage";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "react-router-dom";
-import { getProductById, updateProduct } from "../services/ProductServices";
-import { Product } from "../types";
+import { getProductById, updateProduct } from "../../services/ProductServices";
+import { Product } from "../../types";
 import { Link, Form } from "react-router-dom";
-import ProductForm from "../components/ProductForm";
+import ProductForm from "../../components/ProductForm";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   if (params.id !== undefined) {
