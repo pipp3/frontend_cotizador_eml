@@ -1,4 +1,4 @@
-
+import { Link } from "react-router-dom";
 
 const RegisterSuccess = () => {
   return (
@@ -70,9 +70,16 @@ const RegisterSuccess = () => {
               ¿No recibiste el correo de verificación?
             </p>
 
-            <button className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <button className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-3">
               Reenviar correo de verificación
             </button>
+            
+            <Link
+              to="/"
+              className="w-full flex justify-center py-2 px-4 border border-indigo-300 text-sm font-medium rounded-md text-indigo-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Volver al inicio de sesión
+            </Link>
           </div>
         </div>
 

@@ -1,11 +1,106 @@
-import { useState } from "react";
-import { Link, Form } from "react-router-dom";
-
+import { useState, useEffect } from "react";
+import {
+  Link,
+  Form,
+  ActionFunctionArgs,
+  useActionData,
+  useSearchParams,
+  useNavigate,
+  useNavigation,
+} from "react-router-dom";
+import { resetPassword } from "../../services/AuthServices";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/20/solid";
+import { toast } from "react-toastify";
+import Loader from "../../components/Loader";
+
+type ActionReturn = {
+  success: boolean;
+  message: string;
+  error?: string;
+};
+
+export async function action({
+  request,
+}: ActionFunctionArgs): Promise<ActionReturn> {
+  const formData = await request.formData();
+  const newPassword = formData.get("newPassword") as string;
+  const confirmPassword = formData.get("confirmPassword") as string;
+  const url = new URL(request.url);
+  const token = url.searchParams.get("token");
+  if (newPassword !== confirmPassword) {
+    return {
+      success: false,
+      message: "Las contraseñas no coinciden",
+    };
+  }
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
+  if (!passwordRegex.test(newPassword)) {
+    return {
+      success: false,
+      message: "La contraseña no cumple con los requisitos",
+    };
+  }
+  if (!token) {
+    return {
+      success: false,
+      message: "Token no válido",
+    };
+  }
+  try {
+    await resetPassword(newPassword, token);
+    return {
+      success: true,
+      message: "Contraseña actualizada correctamente",
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Error al actualizar la contraseña",
+    };
+  }
+}
+
 const ChangePassword = () => {
   // Estados para controlar la visibilidad de las contraseñas
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const actionData = useActionData() as { success: boolean; message: string };
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+ //console.log(token);
+  const [passwordError, setPasswordError] = useState("");
+  const validatePassword = (password: string) => {
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
+    if (!passwordRegex.test(password)) {
+      setPasswordError("La contraseña no cumple con los requisitos");
+      return false;
+    } else {
+      setPasswordError("");
+      return true;
+    }
+  };
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
+
+  useEffect(() => {
+    if (!token) {
+      toast.error("Token no válido o expirado");
+      setTimeout(() => navigate("/"), 3000);
+    }
+  }, [token, navigate]);
+
+  useEffect(() => {
+    if (actionData) {
+      if (actionData.success) {
+        toast.success(actionData.message);
+        setTimeout(() => navigate("/"), 3000);
+      } else {
+        toast.error(actionData.message);
+      }
+    }
+  }, [actionData, navigate]);
+
   // Función para mostrar/ocultar contraseñas
   const togglePassword = (field: string) => {
     if (field === "new") {
@@ -16,7 +111,17 @@ const ChangePassword = () => {
   };
   return (
     <div className="flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+      <div className="max-w-md w-full space-y-8 relative">
+        {/* Mostrar loader cuando se está enviando el formulario */}
+        {isSubmitting && 
+          <Loader 
+            fullScreen={true} 
+            text="Actualizando contraseña..." 
+            type="beat"
+            loading={true}
+          />
+        }
+        
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-indigo-800">
             Cambiar Contraseña
@@ -28,7 +133,7 @@ const ChangePassword = () => {
 
         {/* Mensaje de error */}
 
-        <Form className="mt-8 space-y-6">
+        <Form className="mt-8 space-y-6" method="POST">
           <div className="rounded-md shadow-sm -space-y-px">
             {/* Nueva contraseña */}
             <div className="relative mb-4">
@@ -41,8 +146,12 @@ const ChangePassword = () => {
                 type={showNewPassword ? "text" : "password"}
                 className="appearance-none rounded-t-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Nueva contraseña"
+                onChange={(e) => validatePassword(e.target.value)}
                 required
               />
+              {passwordError && (
+                <p className="text-red-500 text-xs mt-1">{passwordError}</p>
+              )}
               <button
                 type="button"
                 onClick={() => togglePassword("new")}
@@ -151,9 +260,14 @@ const ChangePassword = () => {
           <div className="flex items-center justify-between">
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              disabled={isSubmitting}
+              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
+                isSubmitting 
+                  ? "bg-indigo-400 cursor-not-allowed" 
+                  : "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              }`}
             >
-              Actualizar contraseña
+              {isSubmitting ? "Procesando..." : "Actualizar contraseña"}
             </button>
           </div>
         </Form>

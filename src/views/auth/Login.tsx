@@ -1,34 +1,60 @@
-import React from "react";
+import { useState,useEffect } from "react";
 import {
   Link,
   Form,
   ActionFunctionArgs,
-  redirect,
   useActionData,
+  useNavigation,
+  useSearchParams,
+  redirect,
 } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { LoginUser } from "../../services/AuthServices";
+import { LoginUser, isAuthenticated } from "../../services/AuthServices";
 import ErrorMessage from "../../components/ErrorMessage";
+import Loader from "../../components/Loader";
+
+// Loader para verificar si el usuario ya está autenticado
+export async function loader() {
+  try {
+    // Verificar si el usuario ya está autenticado
+    const authResponse = await isAuthenticated();
+    
+    // Si está autenticado, redirigir al dashboard
+    if (authResponse.success) {
+      return redirect('/dashboard');
+    }
+    
+    // Si no está autenticado, continuar con la página de login
+    return null;
+  } catch (error) {
+    console.error("Error verificando autenticación:", error);
+    return null;
+  }
+}
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
-  //console.log(data);
+  
   let error = "";
   if (Object.values(data).includes("")) {
     error = "Todos los campos son requeridos";
-    //console.log(error);
   }
 
   if (error.length) {
     return error;
   }
+  
   try {
     const response = await LoginUser(data);
     if(response && response.success){
-      return redirect("/dashboard");
-    }
-    else{
+      // Retornar objeto con información que será utilizada por el componente
+      return {
+        success: true, 
+        message: "Inicio de sesión exitoso",
+        shouldRedirect: true
+      };
+    } else {
       return "Error al iniciar sesión. Verifica tus credenciales";
     }
   } catch (error) {
@@ -38,17 +64,45 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Login() {
-  const error = useActionData() as string;
-
-  const [showPassword, setShowPassword] = React.useState(false);
+  const actionData = useActionData() as any;
+  const navigation = useNavigation();
+  const [searchParams] = useSearchParams();
+  const message = searchParams.get('message');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const isSubmitting = navigation.state === "submitting";
 
   const tooglePassword = () => {
     setShowPassword(!showPassword);
   };
+  
+  // Determinar el texto del loader basado en el estado actual
+  const getLoaderText = () => {
+    return "Iniciando sesión...";
+  };
+  
+  useEffect(() => {
+    if (actionData && typeof actionData === 'object' && actionData.success && actionData.shouldRedirect) {
+      setIsRedirecting(true);
+      const timer = setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [actionData]);
 
   return (
-    <div className=" flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 relative">
+        {(isSubmitting || isRedirecting) && 
+          <Loader 
+            fullScreen={true} 
+            text={getLoaderText()} 
+            type="pulse" 
+            loading={true} 
+          />
+        }
+        
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-indigo-800">
             Iniciar Sesión
@@ -63,7 +117,15 @@ export default function Login() {
             </Link>
           </p>
         </div>
-        {error && <ErrorMessage>{error}</ErrorMessage>}
+        
+        {message && (
+          <div className="mb-4 p-3 bg-green-100 text-green-800 rounded">
+            {message}
+          </div>
+        )}
+        
+        {typeof actionData === 'string' && <ErrorMessage>{actionData}</ErrorMessage>}
+        
         <Form className="mt-8 space-y-6" method="POST">
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
@@ -134,9 +196,14 @@ export default function Login() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              disabled={isSubmitting}
+              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
+                isSubmitting 
+                  ? "bg-indigo-400 cursor-not-allowed" 
+                  : "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              }`}
             >
-              Iniciar Sesión
+              {isSubmitting ? "Procesando..." : "Iniciar Sesión"}
             </button>
           </div>
         </Form>

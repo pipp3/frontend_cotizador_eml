@@ -12,15 +12,19 @@ import {action as deleteProduct} from "./components/ProductDetails";
 import { setupAxiosInterceptors } from "./services/AuthServices";
 
 // Auth component
-import Login,{action as loginUser} from "./views/auth/Login";
+import Login,{action as loginUser, loader as loginLoader} from "./views/auth/Login";
 import Register,{action as registerUser} from "./views/auth/Register";
-import ForgotPassword from "./views/auth/ForgotPassword";
+import ForgotPassword,{action as forgotPasswordAction} from "./views/auth/ForgotPassword";
 import ConfirmAccount, { loader as confirmAccountLoader } from "./views/auth/ConfirmAccount";
 import RegisterSuccess from "./views/auth/RegisterSuccess";
-import ChangePassword from "./views/auth/ChangePassword";
+import ChangePassword,{action as changePasswordAction} from "./views/auth/ChangePassword";
 
 //Dashboard component
 import Dashboard,{loader as dashboardLoader} from "./views/dashboard/dashboard";
+import ExpiredToken from "./views/auth/ExpiredToken";
+
+
+import NotFound from "./views/NotFound";
 
 setupAxiosInterceptors();
 
@@ -84,7 +88,8 @@ export const Router = createBrowserRouter([
         index: true,
         path: "/",
         element: <Login />,
-        action: loginUser
+        action: loginUser,
+        loader: loginLoader
       },
       {
         path: "/registro",
@@ -99,17 +104,31 @@ export const Router = createBrowserRouter([
       {
         path: "/recuperar-password",
         element: <ForgotPassword />,
+        action: forgotPasswordAction
       },
       {
         path: "/cambiar-password",
         element: <ChangePassword />,
+        action: changePasswordAction
+
       },
       {
         path: "/confirmar-cuenta",
         element: <ConfirmAccount />,
         loader: confirmAccountLoader
-      }
+      },
+      {
+        path: "/token-expirado",
+        element: <ExpiredToken />,
+        handle: { preventAuthRedirect: true }
+      },
+      
       
     ]
+  },
+
+  {
+    path: "*",
+    element: <NotFound />
   }
 ]);

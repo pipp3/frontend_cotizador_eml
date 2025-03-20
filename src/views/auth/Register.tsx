@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Link,
   Form,
   ActionFunctionArgs,
   useActionData,
   redirect,
+  useNavigation,
 } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import ErrorMessage from "../../components/ErrorMessage";
 import { RegisterUser } from "../../services/AuthServices";
+import Loader from "../../components/Loader";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -78,18 +80,31 @@ export async function action({ request }: ActionFunctionArgs) {
     return error;
   }
 
-  // Eliminar confirmPassword antes de enviar los datos
-  const { confirmPassword, ...dataToSend } = data;
-  await RegisterUser(dataToSend);
-  return redirect("/registro-exitoso");
+  try {
+    // Eliminar confirmPassword antes de enviar los datos
+    const { confirmPassword, ...dataToSend } = data;
+    await RegisterUser(dataToSend);
+    
+    // Devolver un objeto que indique éxito y la necesidad de redirección
+    return {
+      success: true,
+      message: "Registro exitoso",
+      shouldRedirect: true
+    };
+  } catch (error: any) {
+    return error.message || "Error al registrar el usuario";
+  }
 }
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordFocus, setPasswordFocus] = useState(false);
-
-  const error = useActionData() as string;
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
+  const actionData = useActionData() as any;
 
   const togglePassword = () => {
     setShowPassword(!showPassword);
@@ -99,9 +114,35 @@ export default function Register() {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  // Función para obtener el texto del loader
+  const getLoaderText = () => {
+    return "Procesando registro...";
+  };
+
+  // Efecto para manejar la redirección
+  useEffect(() => {
+    if (actionData && typeof actionData === 'object' && actionData.success && actionData.shouldRedirect) {
+      setIsRedirecting(true);
+      const timer = setTimeout(() => {
+        window.location.href = "/registro-exitoso";
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [actionData]);
+
   return (
     <div className="flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
+        {/* Mostrar loader cuando se está enviando el formulario o redirigiendo */}
+        {(isSubmitting || isRedirecting) && 
+          <Loader 
+            fullScreen={true} 
+            text={getLoaderText()} 
+            type="pulse" 
+            loading={true}
+          />
+        }
+        
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-indigo-800">
             Crear una cuenta
@@ -116,7 +157,7 @@ export default function Register() {
             </Link>
           </p>
         </div>
-        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {typeof actionData === 'string' && <ErrorMessage>{actionData}</ErrorMessage>}
         <Form className="mt-8 space-y-6" method="POST">
           {/* Información Personal */}
           <div className="space-y-4">

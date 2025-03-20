@@ -1,6 +1,7 @@
 import { Navigate, Outlet, useLoaderData } from 'react-router-dom'
 import { AuthResponse } from '../types/users'
 import { isAuthenticated } from '../services/AuthServices'
+import { redirect } from 'react-router-dom'
 
 const ProtectedRoute = ({requiredRole}:{requiredRole?:string}) => {
     const isAuth = useLoaderData() as AuthResponse
@@ -21,8 +22,19 @@ const ProtectedRoute = ({requiredRole}:{requiredRole?:string}) => {
 export default ProtectedRoute
 
 // Loader para verificar autenticación
-export async function loader() {
-    const isAuth = await isAuthenticated()
-    return isAuth
-
+export const loader = async () => {
+    try {
+        // Llamar a la función isAuthenticated para verificar con el backend
+        // Como las cookies se envían automáticamente, no necesitamos extraer el token
+        const authResponse = await isAuthenticated();
+        
+        if (!authResponse.success) {
+            return redirect('/');
+        }
+        
+        return authResponse;
+    } catch (error) {
+        console.error("Error verificando autenticación:", error);
+        return redirect('/token-expirado');
+    }
 }
