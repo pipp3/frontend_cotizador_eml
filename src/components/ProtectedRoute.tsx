@@ -1,40 +1,37 @@
-import { Navigate, Outlet, useLoaderData } from 'react-router-dom'
+import { Outlet, useLoaderData, Navigate } from 'react-router-dom'
 import { AuthResponse } from '../types/users'
 import { isAuthenticated } from '../services/AuthServices'
-import { redirect } from 'react-router-dom'
 
 const ProtectedRoute = ({requiredRole}:{requiredRole?:string}) => {
     const isAuth = useLoaderData() as AuthResponse
-    //console.log(isAuth)
-    //console.log(isAuth.success)
-    //console.log(requiredRole)
-    if (!isAuth || !isAuth.success) {
-        // Redirigir al login si no está autenticado
+    
+    // Si el usuario no está autenticado, redirigir al login
+    if (!isAuth.success) {
         return <Navigate to="/" replace />
     }
-    if (requiredRole && isAuth.data?.rol !== requiredRole) {
-        return <Navigate to="/dashboard" replace />
+    
+    // Si se requiere un rol específico y el usuario no lo tiene, redirigir al login
+    if (requiredRole && isAuth.data && isAuth.data.rol !== requiredRole) {
+        return <Navigate to="/" replace />
     }
-    // Si está autenticado, renderizar las rutas hijas
+    
+    // Si el usuario está autenticado y tiene el rol correcto, mostrar las rutas hijas
     return <Outlet />
 }
 
 export default ProtectedRoute
 
-// Loader para verificar autenticación
+// Loader que verifica la autenticación real
 export const loader = async () => {
     try {
-        // Llamar a la función isAuthenticated para verificar con el backend
-        // Como las cookies se envían automáticamente, no necesitamos extraer el token
-        const authResponse = await isAuthenticated();
-        
-        if (!authResponse.success) {
-            return redirect('/');
-        }
-        
-        return authResponse;
+        const authResponse = await isAuthenticated()
+        return authResponse
     } catch (error) {
-        console.error("Error verificando autenticación:", error);
-        return redirect('/token-expirado');
+        // En caso de error, devolver un objeto que indique que no está autenticado
+        return {
+            success: false,
+            data: null,
+            message: 'No autenticado'
+        }
     }
 }

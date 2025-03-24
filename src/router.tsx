@@ -20,9 +20,9 @@ import RegisterSuccess from "./views/auth/RegisterSuccess";
 import ChangePassword,{action as changePasswordAction} from "./views/auth/ChangePassword";
 
 //Dashboard component
-import Dashboard,{loader as dashboardLoader} from "./views/dashboard/dashboard";
+//import Dashboard from "./views/dashboard/dashboard";
 import ExpiredToken from "./views/auth/ExpiredToken";
-
+import ProductTable,{loader as productTableLoader} from "./views/products/ProductTable";
 
 import NotFound from "./views/NotFound";
 
@@ -30,7 +30,7 @@ setupAxiosInterceptors();
 
 export const Router = createBrowserRouter([
   {
-    path: "/dashboard",
+    path: "/productos",
     element: <ProtectedRoute requiredRole="cliente" />,
     loader: authLoader,
     children: [
@@ -39,15 +39,15 @@ export const Router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Dashboard />,
-            loader: dashboardLoader
+            element: <ProductTable />,
+            loader: productTableLoader
           }
         ]
       }
     ]
   },
   {
-    path: "/productos",
+    path: "/productos-admin",
     element: <ProtectedRoute requiredRole="admin" />,
     loader: authLoader,
     children: [
@@ -56,23 +56,23 @@ export const Router = createBrowserRouter([
         children: [
           {
             index: true,
-            path: "/productos/",
+            path: "/productos-admin/",
             element: <Products />,
             loader: productsLoader
           },
           {
-            path: "/productos/nuevo",
+            path: "/productos-admin/nuevo",
             element: <NewProduct />,
             action: newProductAction
           },
           {
-            path: "/productos/:id/editar",
+            path: "/productos-admin/:id/editar",
             element: <EditProduct />,
             action: editProductAction,
             loader: editProductLoader
           },
           {
-            path:"/productos/:id/eliminar",
+            path:"/productos-admin/:id/eliminar",
             action: deleteProduct
           }
         ]

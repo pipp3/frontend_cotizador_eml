@@ -4,6 +4,7 @@ import {
   DraftProductSchema,
   ProductSchema,
   Product,
+  ProductsForClientesSchema
 } from "../types";
 import axios from "axios";
 
@@ -30,6 +31,29 @@ export const getProducts = async () => {
     return result.output;
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const getProductsForClientes = async () => {
+  try {
+    const url = `${import.meta.env.VITE_API_URL}/productos/get-products-clients`;
+    const { data } = await axios.get(url, {
+      withCredentials: true
+    });
+    const products = data.data;
+    
+    // Usar el schema correcto para productos para clientes
+    const result = safeParse(ProductsForClientesSchema, products);
+    
+    if (!result.success) {
+      console.error("Errores de validación: ", result.issues);
+      throw new Error("Error al validar los productos: " + JSON.stringify(result.issues));
+    }
+    return result.output;
+  } catch (error) {
+    console.error("Error en getProductsForClientes:", error);
+    // Lanzar el error para que sea manejado por el loader
+    throw error;
   }
 };
 

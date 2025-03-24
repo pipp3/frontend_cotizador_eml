@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Link,
   Form,
@@ -6,30 +6,17 @@ import {
   useActionData,
   useNavigation,
   useSearchParams,
-  redirect,
+
 } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { LoginUser, isAuthenticated } from "../../services/AuthServices";
+import { LoginUser } from "../../services/AuthServices";
 import ErrorMessage from "../../components/ErrorMessage";
 import Loader from "../../components/Loader";
 
-// Loader para verificar si el usuario ya está autenticado
+// Loader simplificado sin verificación de autenticación
 export async function loader() {
-  try {
-    // Verificar si el usuario ya está autenticado
-    const authResponse = await isAuthenticated();
-    
-    // Si está autenticado, redirigir al dashboard
-    if (authResponse.success) {
-      return redirect('/dashboard');
-    }
-    
-    // Si no está autenticado, continuar con la página de login
-    return null;
-  } catch (error) {
-    console.error("Error verificando autenticación:", error);
-    return null;
-  }
+  // Simplemente continuar con la página de login
+  return null;
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -71,6 +58,15 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const isSubmitting = navigation.state === "submitting";
+  
+  useEffect(() => {
+    if (actionData?.success && actionData?.shouldRedirect) {
+      setIsRedirecting(true);
+      setTimeout(() => {
+        window.location.href = '/productos';
+      }, 1500);
+    }
+  }, [actionData]);
 
   const tooglePassword = () => {
     setShowPassword(!showPassword);
@@ -81,15 +77,6 @@ export default function Login() {
     return "Iniciando sesión...";
   };
   
-  useEffect(() => {
-    if (actionData && typeof actionData === 'object' && actionData.success && actionData.shouldRedirect) {
-      setIsRedirecting(true);
-      const timer = setTimeout(() => {
-        window.location.href = "/dashboard";
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [actionData]);
 
   return (
     <div className="flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -119,7 +106,7 @@ export default function Login() {
         </div>
         
         {message && (
-          <div className="mb-4 p-3 bg-green-100 text-green-800 rounded">
+          <div className="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded">
             {message}
           </div>
         )}
