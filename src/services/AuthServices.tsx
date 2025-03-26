@@ -125,23 +125,65 @@ export const resetPassword = async (password: string, token: string) => {
   }
 };
 
-export const isAuthenticated = async () => {
-  // Versión simulada que siempre devuelve autenticación exitosa
-  return {
-    success: true,
-    data: {
-      id: 1,
-      nombre: 'Usuario',
-      email: 'usuario@ejemplo.com',
-      rol: 'admin'
-    },
-    message: 'Autenticación simulada exitosa'
-  };
+// Variable para controlar el estado de redirección
+let isRedirecting = false;
+
+export const setupAxiosInterceptors = () => {
+  // Interceptor para respuestas
+  axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      // Rutas públicas que no requieren autenticación
+      const publicRoutes = [
+        '/',
+        '/registro',
+        '/recuperar-password',
+        '/confirmar-cuenta',
+        '/cambiar-password',
+        '/token-expirado',
+        '/registro-exitoso'
+      ];
+
+      // Verificar si estamos en una ruta pública
+      const isPublicRoute = publicRoutes.some(route => 
+        window.location.pathname === route || window.location.pathname === route + '/'
+      );
+
+      // Si es un error 401, no estamos en una ruta pública y no estamos ya redirigiendo
+      if (error.response?.status === 401 && !isPublicRoute && !isRedirecting) {
+        isRedirecting = true;
+        
+       
+        // Redirigir a la ruta principal
+        window.location.href = '/';
+      }
+
+      return Promise.reject(error);
+    }
+  );
 };
 
-// Configuración simplificada de axios sin interceptores complejos
-export const setupAxiosInterceptors = () => {
-  // Función vacía que puede ser ampliada en el futuro
-  console.log("Interceptores configurados (versión simplificada)");
+// Modificar isAuthenticated para usar el interceptor
+export const isAuthenticated = async () => {
+  try {
+    const url = `${import.meta.env.VITE_API_URL}/auth/verify`;
+    const response = await axios.get(url, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error: any) {
+    // No manejamos el error 401 aquí, lo dejamos para el interceptor
+    if (error.response?.status !== 401) {
+      return {
+        success: false,
+        data: null,
+        message: error.response?.data?.error || "Error de conexión"
+      };
+    }
+    throw error;
+  }
 };
 

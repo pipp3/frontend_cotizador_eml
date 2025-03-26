@@ -6,17 +6,26 @@ import {
   useActionData,
   useNavigation,
   useSearchParams,
-
+  useNavigate,
+  redirect,
 } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { LoginUser } from "../../services/AuthServices";
+import { LoginUser, isAuthenticated } from "../../services/AuthServices";
 import ErrorMessage from "../../components/ErrorMessage";
 import Loader from "../../components/Loader";
 
 // Loader simplificado sin verificación de autenticación
 export async function loader() {
-  // Simplemente continuar con la página de login
-  return null;
+  try {
+    const auth = await isAuthenticated();
+    if (auth.success) {
+      return redirect('/productos');
+    }
+    return null;
+  } catch (error) {
+    // Si hay un error de autenticación, simplemente continuamos con la página de login
+    return null;
+  }
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -56,17 +65,14 @@ export default function Login() {
   const [searchParams] = useSearchParams();
   const message = searchParams.get('message');
   const [showPassword, setShowPassword] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false);
+  const navigate = useNavigate();
   const isSubmitting = navigation.state === "submitting";
   
   useEffect(() => {
     if (actionData?.success && actionData?.shouldRedirect) {
-      setIsRedirecting(true);
-      setTimeout(() => {
-        window.location.href = '/productos';
-      }, 1500);
+      navigate('/productos', { replace: true });
     }
-  }, [actionData]);
+  }, [actionData, navigate]);
 
   const tooglePassword = () => {
     setShowPassword(!showPassword);
@@ -81,7 +87,7 @@ export default function Login() {
   return (
     <div className="flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 relative">
-        {(isSubmitting || isRedirecting) && 
+        {(isSubmitting) && 
           <Loader 
             fullScreen={true} 
             text={getLoaderText()} 

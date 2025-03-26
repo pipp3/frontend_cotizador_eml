@@ -4,10 +4,14 @@ import AuthLayout from "./layouts/AuthLayout";
 
 import ProtectedRoute,{loader as authLoader} from "./components/ProtectedRoute";
 
+
 import Products, {loader as productsLoader} from "./views/products/Products";
 import NewProduct, {action as newProductAction} from "./views/products/NewProduct";
 import EditProduct, {action as editProductAction,loader as editProductLoader} from "./views/products/EditProduct";
 import {action as deleteProduct} from "./components/ProductDetails";
+
+import ManageUsers, {loader as usersLoader} from "./views/users/ManageUsers";
+import NewUser, {action as newUserAction} from "./views/users/NewUser";
 
 import { setupAxiosInterceptors } from "./services/AuthServices";
 
@@ -24,6 +28,8 @@ import ChangePassword,{action as changePasswordAction} from "./views/auth/Change
 import ExpiredToken from "./views/auth/ExpiredToken";
 import ProductTable,{loader as productTableLoader} from "./views/products/ProductTable";
 
+import Me from "./views/users/Me";
+
 import NotFound from "./views/NotFound";
 
 setupAxiosInterceptors();
@@ -31,7 +37,7 @@ setupAxiosInterceptors();
 export const Router = createBrowserRouter([
   {
     path: "/productos",
-    element: <ProtectedRoute requiredRole="cliente" />,
+    element: <ProtectedRoute />,
     loader: authLoader,
     children: [
       {
@@ -81,6 +87,22 @@ export const Router = createBrowserRouter([
     ],
   },
   {
+    path: "/perfil",
+    element: <ProtectedRoute />,
+    loader: authLoader,
+    children: [
+      {
+        element: <Layout />,
+        children: [
+          {
+            index: true,
+            element: <Me />
+          }
+        ]
+      }
+    ]
+  },
+  {
     path: "/",
     element: <AuthLayout />,
     children: [
@@ -89,7 +111,7 @@ export const Router = createBrowserRouter([
         path: "/",
         element: <Login />,
         action: loginUser,
-        loader: loginLoader
+        loader: loginLoader,
       },
       {
         path: "/registro",
@@ -126,9 +148,32 @@ export const Router = createBrowserRouter([
       
     ]
   },
-
+  {
+    path: "/administrar-usuarios",
+    element: <ProtectedRoute requiredRole="admin" />,
+    loader: authLoader,
+    children: [
+      {
+        element: <Layout />,
+        children: [
+          {
+            index: true,
+            element: <ManageUsers />,
+            loader: usersLoader
+          },
+          {
+            path: "/administrar-usuarios/nuevo",
+            element: <NewUser />,
+            action: newUserAction
+          }
+          
+        ]
+      }
+    ]
+  },
   {
     path: "*",
     element: <NotFound />
   }
 ]);
+

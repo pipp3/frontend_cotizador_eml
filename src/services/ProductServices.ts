@@ -37,10 +37,15 @@ export const getProducts = async () => {
 export const getProductsForClientes = async () => {
   try {
     const url = `${import.meta.env.VITE_API_URL}/productos/get-products-clients`;
-    const { data } = await axios.get(url, {
+    const response = await axios.get(url, {
       withCredentials: true
     });
-    const products = data.data;
+    
+    if (!response.data || !response.data.data) {
+      throw new Error("No se encontraron datos de productos");
+    }
+    
+    const products = response.data.data;
     
     // Usar el schema correcto para productos para clientes
     const result = safeParse(ProductsForClientesSchema, products);
@@ -50,9 +55,12 @@ export const getProductsForClientes = async () => {
       throw new Error("Error al validar los productos: " + JSON.stringify(result.issues));
     }
     return result.output;
-  } catch (error) {
+  } catch (error: any) {
+    // Si es un error 401, dejamos que el interceptor lo maneje
+    if (error.response?.status === 401) {
+      throw error;
+    }
     console.error("Error en getProductsForClientes:", error);
-    // Lanzar el error para que sea manejado por el loader
     throw error;
   }
 };

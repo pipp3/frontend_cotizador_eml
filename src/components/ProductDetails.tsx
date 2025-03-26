@@ -9,13 +9,19 @@ type ProductDetailsProps = {
   index: number;
 };
 
-export async function action({params}:ActionFunctionArgs){
-  if(params.id !== undefined){
-    await deleteProduct(+params.id);
-    return redirect('/')
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const id = formData.get("id");
+
+  try {
+    if (id) {
+      await deleteProduct(+id);
+      return redirect('/');
+    }
+  } catch (error) {
+    throw new Error("No se pudo eliminar el producto");
   }
 }
-
 
 export default function ProductDetails({
   product,
@@ -24,7 +30,7 @@ export default function ProductDetails({
   const navigate = useNavigate();
 
   const handleDelete = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Evitar el envío automático del formulario
+    e.preventDefault();
     const result = await Swal.fire({
       title: "¿Estás seguro que deseas eliminar este producto?",
       text: "Esta acción no se puede deshacer",
@@ -37,65 +43,69 @@ export default function ProductDetails({
     });
 
     if (result.isConfirmed) {
-      e.currentTarget.submit(); // Enviar el formulario si el usuario confirma
+      e.currentTarget.submit();
     }
   };
 
-
   return (
-    <tr className="border-b hover:bg-gray-200 bg-gray-100 border-gray-300">
-      <td className="px-4 py-2 text-sm text-left font-medium text-gray-700 border-r border-gray-300">
+    <tr className="hover:bg-gray-50 transition-colors duration-200">
+      <td className="p-3 text-sm text-gray-700 border-b border-gray-200">
         {index + 1}
       </td>
-      <td className="px-4 py-2 text-sm text-left font-medium text-gray-700 border-r border-gray-300">
+      <td className="p-3 text-sm text-gray-700 border-b border-gray-200">
         {product.nombre}
       </td>
-      <td className="px-4 py-2 text-sm text-left font-medium text-gray-700 border-r border-gray-300">
+      <td className="p-3 text-sm text-gray-700 border-b border-gray-200">
         {product.precio_compra.toLocaleString("es-CL", {
           style: "currency",
           currency: "CLP",
         })}
       </td>
-      <td className="px-4 py-2 text-sm text-left font-medium text-gray-700 border-r border-gray-300">
+      <td className="p-3 text-sm text-gray-700 border-b border-gray-200">
         {product.precio_venta.toLocaleString("es-CL", {
           style: "currency",
           currency: "CLP",
         })}
       </td>
-      <td
-        className={`px-4 py-2 text-sm text-center font-semibold ${
-          product.disponible ? "text-green-500" : "text-red-500"
-        } border-r border-gray-300`}
-      >
-        {product.disponible ? "Sí" : "No"}
+      <td className="p-3 text-sm text-center border-b border-gray-200">
+        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+          product.disponible 
+            ? "bg-green-100 text-green-800" 
+            : "bg-red-100 text-red-800"
+        }`}>
+          {product.disponible ? "Sí" : "No"}
+        </span>
       </td>
-      <td className="px-4 py-2 text-sm text-left font-medium text-gray-700 border-r border-gray-300">
+      <td className="p-3 text-sm text-gray-700 border-b border-gray-200">
         {product.ultima_vez_ingresado}
       </td>
-      <td className="px-4 py-2 text-sm text-left font-medium text-gray-700 border-r border-gray-300">
+      <td className="p-3 text-sm text-gray-700 border-b border-gray-200">
         {product.updated_at}
       </td>
-      <td className="px-4 py-2 text-sm text-left font-medium text-gray-700 space-x-1 flex">
-        <button
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors"
-          onClick={() =>
-            navigate(`/productos/${product.id}/editar`, {
-              state: {
-                product,
-              },
-            })
-          }
-        >
-          <PencilIcon className="w-4 h-4" />
-        </button>
-       <Form method="POST" action={`/productos/${product.id}/eliminar`} onSubmit={handleDelete}>
+      <td className="p-3 text-sm border-b border-gray-200">
+        <div className="flex space-x-2">
           <button
-            type="submit"
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors"
+            className="bg-gradient-to-r from-blue-800 to-purple-800 hover:from-blue-700 hover:to-purple-700 text-white px-3 py-1.5 rounded-md transition-all duration-300 shadow-sm"
+            onClick={() =>
+              navigate(`/productos-admin/${product.id}/editar`, {
+                state: {
+                  product,
+                },
+              })
+            }
           >
-            <TrashIcon className="w-4 h-4" />
+            <PencilIcon className="w-4 h-4" />
           </button>
-        </Form> 
+          <Form method="POST" onSubmit={handleDelete}>
+            <input type="hidden" name="id" value={product.id} />
+            <button
+              type="submit"
+              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-md transition-all duration-300 shadow-sm"
+            >
+              <TrashIcon className="w-4 h-4" />
+            </button>
+          </Form>
+        </div>
       </td>
     </tr>
   );

@@ -52,3 +52,57 @@ export interface AuthResponse {
   message?: string;
   error?: string;
 }
+
+export interface UsersResponse {
+  success: boolean;
+  data: User[];
+  error?: string;
+}
+
+export interface UpdateProfileRequest {
+    nombre?: string;
+    apellido?: string;
+    ciudad?: string;
+    celular?: string;
+}
+
+export interface UpdateProfileResponse {
+    success: boolean;
+    message: string;
+    error?: string;
+}
+
+export interface DeleteUserResponse {
+    success: boolean;
+    message: string;
+    error?: string;
+}
+
+export interface UserData {
+  id: number;
+  nombre: string;
+  apellido: string;
+  celular: string;
+  ciudad: string;
+}
+
+export interface UserDetailsProps {
+  user: User;
+  index: number;
+}
+
+export interface CreateUserRequest {
+    nombre: string;
+    apellido: string;
+    email: string;
+    password: string;
+    celular: string;
+    ciudad: string;
+    rol: string;
+}
+
+export interface CreateUserResponse {
+    success: boolean;
+    message: string;
+    error?: string;
+}
