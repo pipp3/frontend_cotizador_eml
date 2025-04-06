@@ -27,10 +27,18 @@ import ChangePassword,{action as changePasswordAction} from "./views/auth/Change
 //import Dashboard from "./views/dashboard/dashboard";
 import ExpiredToken from "./views/auth/ExpiredToken";
 import ProductTable,{loader as productTableLoader} from "./views/products/ProductTable";
+import OrdersView from "./views/orders/OrdersView";
+import CartView from "./views/cart/CartView";
+import {OrderDetailView} from "./views/OrderDetailView";
 
 import Me from "./views/users/Me";
 
 import NotFound from "./views/NotFound";
+
+import AdminOrdersView from "./views/admin/AdminOrdersView";
+
+import ContactView from "./views/ContactView";
+
 
 setupAxiosInterceptors();
 
@@ -48,6 +56,47 @@ export const Router = createBrowserRouter([
             element: <ProductTable />,
             loader: productTableLoader
           }
+        ]
+      }
+    ]
+  },
+  {
+    path: "/pedidos",
+    element: <ProtectedRoute />,
+    loader: authLoader,
+    children: [
+      {
+        element: <Layout />,
+        children: [
+          {
+            index: true,
+            element: <OrdersView />
+          },
+          {
+            path: ":id",
+            element: <OrderDetailView />
+          }
+        ]
+      }
+    ]
+  },
+  {
+    path: "/pedidos-admin",
+    element: <ProtectedRoute requiredRole="admin" />,
+    loader: authLoader,
+    children: [
+      {
+        element: <Layout />,
+        children: [
+          {
+            index: true,
+            element: <AdminOrdersView />
+          },
+          {
+            path: "/pedidos-admin/:id",
+            element: <OrderDetailView />
+          },
+         
         ]
       }
     ]
@@ -97,6 +146,22 @@ export const Router = createBrowserRouter([
           {
             index: true,
             element: <Me />
+          }
+        ]
+      }
+    ]
+  },
+  {
+    path: "/contacto",
+    element: <ProtectedRoute />,
+    loader: authLoader,
+    children: [
+      {
+        element: <Layout />,
+        children: [
+          {
+            index: true,
+            element: <ContactView />
           }
         ]
       }
@@ -170,6 +235,10 @@ export const Router = createBrowserRouter([
         ]
       }
     ]
+  },
+  {
+    path: "carrito",
+    element: <CartView />,
   },
   {
     path: "*",

@@ -1,5 +1,6 @@
 import { ProductForClientes } from "../types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useCartStore } from "../store/useCartStore";
 
 type ProductDetailsProps = {
   product: ProductForClientes;
@@ -11,49 +12,68 @@ export default function ProductDetailsClient({
   index,
 }: ProductDetailsProps) {
   const [cantidad, setCantidad] = useState(0);
+  const { items, addItem, updateQuantity } = useCartStore();
+
+  // Sincronizar la cantidad con el carrito cuando cambie
+  useEffect(() => {
+    const cartItem = items.find(item => item.product.id === product.id);
+    if (cartItem) {
+      setCantidad(cartItem.quantity);
+    }
+  }, [items, product.id]);
 
   const incrementar = () => {
-    setCantidad(prevCantidad => prevCantidad + 1);
+    const newCantidad = cantidad + 1;
+    setCantidad(newCantidad);
+    if (cantidad === 0) {
+      addItem(product, 1);
+    } else {
+      updateQuantity(product.id, newCantidad);
+    }
   };
 
   const decrementar = () => {
-    setCantidad(prevCantidad => (prevCantidad > 0 ? prevCantidad - 1 : 0));
+    if (cantidad > 0) {
+      const newCantidad = cantidad - 1;
+      setCantidad(newCantidad);
+      if (newCantidad === 0) {
+        updateQuantity(product.id, 0);
+      } else {
+        updateQuantity(product.id, newCantidad);
+      }
+    }
   };
 
   // Color alternado para filas pares e impares
-  const bgColor = index % 2 === 0 ? "bg-indigo-50" : "bg-white";
+  const bgColor = index % 2 === 0 ? "bg-white" : "bg-white";
 
   return (
-    <tr className={`${bgColor} hover:bg-purple-50 transition-colors duration-150 ease-in-out`}>
-      <td className="p-3 text-left font-medium text-gray-700 border-b border-indigo-100">
+    <tr className="hover:bg-blue-50 transition-colors duration-200">
+      <td className="p-3 text-sm text-left font-medium text-gray-700 border-r border-blue-100">
         {index + 1}
       </td>
-      <td className="p-3 text-left font-medium text-gray-700 border-b border-indigo-100">
+      <td className="p-3 text-sm text-left font-medium text-gray-700 border-r border-blue-100">
         {product.nombre}
       </td>
       
-      <td className="p-3 text-left font-medium text-blue-700 border-b border-indigo-100">
+      <td className="p-3 text-sm text-left font-medium text-gray-700 border-r border-blue-100">
         {product.precio_venta.toLocaleString("es-CL", {
           style: "currency",
           currency: "CLP",
         })}
       </td>
-      <td
-        className={`p-3 text-center font-semibold border-b border-indigo-100 ${
-          product.disponible ? "text-green-600" : "text-rose-600"
-        }`}
-      >
+      <td className="p-3 text-sm text-center font-medium text-gray-700 border-r border-blue-100">
         {product.disponible ? (
-          <span className="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs">
+          <span className="bg-green-100 text-green-800 py-1 px-3 rounded-full text-xs font-semibold">
             Disponible
           </span>
         ) : (
-          <span className="bg-rose-100 text-rose-600 py-1 px-3 rounded-full text-xs">
+          <span className="bg-red-100 text-red-800 py-1 px-3 rounded-full text-xs font-semibold">
             No disponible
           </span>
         )}
       </td>
-      <td className="p-3 text-center border-b border-indigo-100">
+      <td className="p-3 text-sm text-center font-medium text-gray-700">
         <div className="flex items-center justify-center space-x-2">
           <button
             onClick={decrementar}

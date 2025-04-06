@@ -50,11 +50,13 @@ const Header: React.FC = () => {
           <nav className="flex space-x-4">
             <Link to="/productos" className="hover:text-blue-200 transition-all duration-300 hover:scale-105 hover:font-semibold">Inicio</Link>
             <div className="h-6 w-px bg-white/30"></div>
-            <Link to="#" className="hover:text-blue-200 transition-all duration-300 hover:scale-105 hover:font-semibold">Contacto</Link>
+            <Link to="/contacto" className="hover:text-blue-200 transition-all duration-300 hover:scale-105 hover:font-semibold">Contacto</Link>
             {isAdmin && (
               <div className="flex space-x-4">
                 <div className="h-6 w-px bg-white/30"></div>
                 <Link to="/productos-admin" className="hover:text-blue-200 transition-all duration-300 hover:scale-105 hover:font-semibold">Administrar Productos</Link>
+                <div className="h-6 w-px bg-white/30"></div>
+                <Link to="/pedidos-admin" className="hover:text-blue-200 transition-all duration-300 hover:scale-105 hover:font-semibold">Administrar Pedidos</Link>
                 <div className="h-6 w-px bg-white/30"></div>
                 <Link to="/administrar-usuarios" className="hover:text-blue-200 transition-all duration-300 hover:scale-105 hover:font-semibold">Administrar Usuarios</Link>
               </div>

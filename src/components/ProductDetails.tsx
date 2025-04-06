@@ -48,26 +48,26 @@ export default function ProductDetails({
   };
 
   return (
-    <tr className="hover:bg-gray-50 transition-colors duration-200">
-      <td className="p-3 text-sm text-gray-700 border-b border-gray-200">
+    <tr className="hover:bg-blue-50 transition-colors duration-200">
+      <td className="p-3 text-sm text-left font-medium text-gray-700 border-r border-blue-100">
         {index + 1}
       </td>
-      <td className="p-3 text-sm text-gray-700 border-b border-gray-200">
+      <td className="p-3 text-sm text-left font-medium text-gray-700 border-r border-blue-100">
         {product.nombre}
       </td>
-      <td className="p-3 text-sm text-gray-700 border-b border-gray-200">
+      <td className="p-3 text-sm text-left font-medium text-gray-700 border-r border-blue-100">
         {product.precio_compra.toLocaleString("es-CL", {
           style: "currency",
           currency: "CLP",
         })}
       </td>
-      <td className="p-3 text-sm text-gray-700 border-b border-gray-200">
+      <td className="p-3 text-sm text-left font-medium text-gray-700 border-r border-blue-100">
         {product.precio_venta.toLocaleString("es-CL", {
           style: "currency",
           currency: "CLP",
         })}
       </td>
-      <td className="p-3 text-sm text-center border-b border-gray-200">
+      <td className="p-3 text-sm text-center font-medium text-gray-700 border-r border-blue-100">
         <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
           product.disponible 
             ? "bg-green-100 text-green-800" 
@@ -76,13 +76,13 @@ export default function ProductDetails({
           {product.disponible ? "Sí" : "No"}
         </span>
       </td>
-      <td className="p-3 text-sm text-gray-700 border-b border-gray-200">
+      <td className="p-3 text-sm text-left font-medium text-gray-700 border-r border-blue-100">
         {product.ultima_vez_ingresado}
       </td>
-      <td className="p-3 text-sm text-gray-700 border-b border-gray-200">
+      <td className="p-3 text-sm text-left font-medium text-gray-700 border-r border-blue-100">
         {product.updated_at}
       </td>
-      <td className="p-3 text-sm border-b border-gray-200">
+      <td className="p-3 text-sm text-left font-medium text-gray-700">
         <div className="flex space-x-2">
           <button
             className="bg-gradient-to-r from-blue-800 to-purple-800 hover:from-blue-700 hover:to-purple-700 text-white px-3 py-1.5 rounded-md transition-all duration-300 shadow-sm"

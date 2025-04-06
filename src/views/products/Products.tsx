@@ -13,50 +13,50 @@ export default function Products() {
   const products = useLoaderData() as Product[];
   
   return (
-    <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-lg shadow-lg">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+    <div className="p-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-4xl font-bold text-blue-800">
           Listado de Productos
         </h1>
         <Link
           to="/productos/nuevo"
-          className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-md hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-md"
+          className="bg-gradient-to-r from-blue-800 to-purple-800 text-white px-6 py-2 rounded-md hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-md"
         >
           Nuevo Producto
         </Link>
       </div>
-      <div className="mt-4">
-        <div className="overflow-hidden rounded-lg shadow-xl">
-          <table className="w-full border-collapse bg-white">
+      <div className="mt-8">
+        <div className="overflow-x-auto rounded-lg shadow-lg">
+          <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-                <th className="p-3 text-left font-bold border-b-2 border-blue-400">
+              <tr className="bg-gradient-to-r from-blue-800 to-purple-800">
+                <th className="p-3 text-left text-white font-semibold text-sm border-r border-blue-700">
                   #
                 </th>
-                <th className="p-3 text-left font-bold border-b-2 border-blue-400">
+                <th className="p-3 text-left text-white font-semibold text-sm border-r border-blue-700">
                   Nombre
                 </th>
-                <th className="p-3 text-left font-bold border-b-2 border-blue-400">
+                <th className="p-3 text-left text-white font-semibold text-sm border-r border-blue-700">
                   Precio Compra
                 </th>
-                <th className="p-3 text-left font-bold border-b-2 border-blue-400">
+                <th className="p-3 text-left text-white font-semibold text-sm border-r border-blue-700">
                   Precio Venta
                 </th>
-                <th className="p-3 text-center font-bold border-b-2 border-blue-400">
+                <th className="p-3 text-left text-white font-semibold text-sm border-r border-blue-700">
                   Stock
                 </th>
-                <th className="p-3 text-left font-bold border-b-2 border-blue-400">
+                <th className="p-3 text-left text-white font-semibold text-sm border-r border-blue-700">
                   Ultima Vez Ingresado
                 </th>
-                <th className="p-3 text-left font-bold border-b-2 border-blue-400">
+                <th className="p-3 text-left text-white font-semibold text-sm border-r border-blue-700">
                   Ultima Vez Actualizado
                 </th>
-                <th className="p-3 text-left font-bold border-b-2 border-blue-400">
+                <th className="p-3 text-left text-white font-semibold text-sm border-r border-blue-700">
                   Acciones
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-blue-100">
               {products.map((product, index) => (
                 <ProductDetails key={product.id} product={product} index={index} />
               ))}
