@@ -20,14 +20,6 @@ export default function OrdersView() {
     tipo_documento: 'factura'
   });
 
-  // Función para validar RUT chileno
-  const validateRut = (rut: string): boolean => {
-    // Eliminar puntos y guión
-    const cleanRut = rut.replace(/[.-]/g, '');
-    
-    // Verificar que solo contenga números y tenga entre 7 y 9 dígitos
-    return /^\d{7,9}$/.test(cleanRut);
-  };
 
   // Función para formatear RUT
   const formatRut = (rut: string): string => {

@@ -44,8 +44,6 @@ export default function ProductDetailsClient({
     }
   };
 
-  // Color alternado para filas pares e impares
-  const bgColor = index % 2 === 0 ? "bg-white" : "bg-white";
 
   return (
     <tr className="hover:bg-blue-50 transition-colors duration-200">
